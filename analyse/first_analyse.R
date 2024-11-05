@@ -4,6 +4,7 @@ ecoli_BW25113 <- read.table("data/All-genes-of-E.-coli-K-12-substr.-BW25113.txt"
 ecoli_BW25113 <- ecoli_BW25113[order(ecoli_BW25113$Left.End.Position),1:4]
 rownames(ecoli_BW25113) <- 1:nrow(ecoli_BW25113)
 
+# ajoute longeur à la base de donné de référence
 gene_length <- c()
 for (i in 1:nrow(ecoli_BW25113)) {
   res = ecoli_BW25113$Right.End.Position[i] - ecoli_BW25113$Left.End.Position[i]
@@ -11,12 +12,21 @@ for (i in 1:nrow(ecoli_BW25113)) {
 }
 ecoli_BW25113 <- cbind(ecoli_BW25113, length = gene_length)
 
-ecoli$first_pos <- ifelse(ecoli$flag == 99 | 97 | 163 | 161, ecoli$first_pos + 47,
-                          ifelse(ecoli$flag == 147 | 145 | 83 | 81, ecoli$first_pos + 20, ecoli$first_pos))
+# Trouve la position du debut de gene selon la position du primer donc position initialer de primer left +47 car 3 nucléotide de codon d'intiation dans le primer.
+# Pour le primer right, position initial du primer + 20 car 20 nucléotide du gene dans le primer
+ecoli$first_pos <- ifelse(ecoli$flag == 99 | ecoli$flag == 97 | ecoli$flag == 163 | ecoli$flag == 161,
+                          ecoli$first_pos + 47,
+                          ifelse(ecoli$flag == 147 | ecoli$flag == 145 | ecoli$flag == 83 | ecoli$flag == 81,
+                                 ecoli$first_pos + 20, ecoli$first_pos))
 
-ecoli$second_pos <- ifelse(ecoli$flag == 99 | 97 | 163 | 161, ecoli$second_pos + 20,
-                           ifelse(ecoli$flag == 147 | 145 | 83 | 81, ecoli$second_pos + 47, ecoli$second_pos))
 
+ecoli$second_pos <- ifelse(ecoli$flag == 99 | ecoli$flag == 97 | ecoli$flag == 163 | ecoli$flag == 161,
+                           ecoli$second_pos + 20,
+                           ifelse(ecoli$flag == 147 | ecoli$flag == 145 | ecoli$flag == 83 | ecoli$flag == 81,
+                                  ecoli$second_pos + 47, ecoli$second_pos))
+
+
+# 77 car 47 pour le primer left qui est a l'exterieur du gene et 30 pour le right. 
 for (i in 1:nrow(ecoli)) {
   if (ecoli$length[i] > 0) {
     ecoli$length[i] = ecoli$length[i] - 77
@@ -58,7 +68,54 @@ num_quality
 # Il y a 25 non-essentiel et 1 presume essentiel.
 
 ecoli_positif <- subset(ecoli,ecoli$length > 0 & ecoli$length < 10000)
+ecoli_new_gene <- ecoli_positif[,c(1,2,4,5)]
 # garde une copie par gene et enleve les longeur aberente
+new_gene_f <- c()
+new_gene_s <- c()
+new_gene_f_pos <- data.frame()
+new_gene_s_pos <- data.frame()
+diff_f <- c()
+diff_s <- c()
+for (i in 1:nrow(ecoli_new_gene)) {
+  valeur_first <- ecoli_new_gene$first_pos[i]
+  valeur_second <- ecoli_new_gene$second_pos[i]
+  # Calculer la correspondance la plus proche
+  index_proche_first <- which.min(abs(ecoli_BW25113$Left.End.Position - valeur_first))
+  index_proche_second <- which.min(abs(ecoli_BW25113$Right.End.Position - valeur_second))
+  
+  new_gene_f[i] <- ecoli_BW25113$Gene_Name[index_proche_first]
+  new_gene_s[i] <- ecoli_BW25113$Gene_Name[index_proche_second]
+  new_gene_f_pos[i,1] <- ecoli_BW25113$Left.End.Position[index_proche_first]
+  new_gene_f_pos[i,2] <- ecoli_BW25113$Right.End.Position[index_proche_first]
+  new_gene_s_pos[i,1] <- ecoli_BW25113$Right.End.Position[index_proche_second]
+  new_gene_s_pos[i,2] <- ecoli_BW25113$Left.End.Position[index_proche_second]
+  diff_f[i] <- ecoli_new_gene$first_pos[i] - new_gene_f_pos[i,1]
+  diff_s[i] <- ecoli_new_gene$second_pos[i] - new_gene_s_pos[i,1]
+}
+ecoli_new_gene <- cbind(ecoli_new_gene, 
+                       new_gene_f = new_gene_f,
+                       new_gene_s = new_gene_s,
+                       new_gene_f_pos = new_gene_f_pos[,1],
+                       new_gene_f_s_pos = new_gene_f_pos[,2],
+                       new_gene_s_pos = new_gene_s_pos[,1],
+                       new_gene_s_f_pos = new_gene_s_pos[,2],
+                       diff_f = diff_f,
+                       diff_s = diff_s,
+                       fiable = (new_gene_f == new_gene_s))
+
+ecoli_positif <- cbind(ecoli_positif,
+                       new_gene = new_gene_f,
+                       fiable = ecoli_new_gene$new_gene_f == ecoli_new_gene$new_gene_s,
+                       modif = ecoli_new_gene$new_gene_f != ecoli_new_gene$gene | ecoli_new_gene$new_gene_s != ecoli_new_gene$gene)
+
+ecoli_positif <- ecoli_positif[,c(1,2,9,10,11,3,4,5,6,7,8)]
+ecoli_new_gene <- ecoli_new_gene[,c('id','gene','fiable','new_gene_f','new_gene_s','first_pos','new_gene_f_pos','new_gene_f_s_pos','diff_f','second_pos','new_gene_s_pos','new_gene_s_f_pos','diff_s')]
+
+table(ecoli_new_gene$new_gene_f == ecoli_new_gene$new_gene_s)
+sub_new_gene_f_s <- subset(ecoli_new_gene,ecoli_new_gene$new_gene_f != ecoli_new_gene$new_gene_s)
+sub_new_gene_old_new <- subset(ecoli_new_gene, ecoli_new_gene$new_gene_f != ecoli_new_gene$gene | ecoli_new_gene$new_gene_s != ecoli_new_gene$gene)
+
+write.csv(sub_new_gene_old_new, file = "../keio_long_read/data/ecoli_bw25113_gene_name_modif.csv")
 
 correspondance_l <- c()
 correspondance_r <- c()
