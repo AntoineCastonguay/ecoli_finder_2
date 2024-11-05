@@ -40,7 +40,7 @@ huge_gene <- subset(ecoli,ecoli$length > 100000)
 
 other_flag <- subset(ecoli, ecoli$flag %in% c(65, 129, 81, 161, 97, 145, 113, 177))
 good_flag <- subset(ecoli, ecoli$flag %in% c(83,99,147,163))
-num_flag <- table(ecoli$flag)
+table(ecoli$flag)
 
 # Les flag
 # Mapped within the insert size and in correct orientation
@@ -62,8 +62,7 @@ num_flag <- table(ecoli$flag)
 # 65, 129, 81, 161, 97 et 145 insert > 3550 inclus les pairs aberentes.
 
 quality <- subset(ecoli,ecoli$quality != '50M')
-num_quality <- table(ecoli$quality)
-num_quality
+table(ecoli$quality)
 # 26 donc la qualite n'est pas 50M sur 8576.
 # Il y a 25 non-essentiel et 1 presume essentiel.
 
