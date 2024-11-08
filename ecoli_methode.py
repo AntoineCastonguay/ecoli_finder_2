@@ -78,22 +78,20 @@ class Methods(object):
         pathlib.Path(folder).mkdir(parents=True, exist_ok=True)
     
     @staticmethod
-    def find_sam_files(folder):
-        sam_files = []
+    def get_sam_file(folder):
         for filename in os.listdir(folder):
             if filename.endswith('.sam'):
-                sam_files.append(os.path.join(folder, filename))
-        return sam_files
+                return os.path.join(folder, filename)
+        return None
 
     @staticmethod
-    def list_to_file(my_list, output_file):
-        with open(output_file, 'wt') as f:
-            for l in my_list:
-                f.write('{}\n'.format(l))
-
-    @staticmethod
-    def list_files_in_folder(folder, extension):
-        return glob(folder + '/*' + extension)
+    def list_files_in_folder(folder, extensions):
+        if isinstance(extensions, str):
+            extensions = [extensions]
+        files = []
+        for ext in extensions:
+            files.extend(glob(f"{folder}/*.{ext}"))
+        return files
 
     @staticmethod
     def flag_done(flag_file):
@@ -102,19 +100,24 @@ class Methods(object):
         
     @staticmethod
     def alignment(genome, primer, output):
-        print('Alignment processing...')
-
-        file = Methods.list_files_in_folder(primer, 'fa')
+        # Récupère les fichiers dans le dossier primer avec les extensions spécifiées
+        extensions = ['fa', 'fasta']
+        file = Methods.list_files_in_folder(primer, extensions)
         mon_dict = {}
 
         for f in file:
             name_file = os.path.basename(f)
             name = os.path.splitext(name_file)[0]
-            number = name[-1]
-            base = name[:-1]
+            if "_" in name:
+                base, orientaition = name.rsplit('_', 1)
+                orientaition = orientaition.upper()
+                if orientaition != "R" and orientaition != "F":
+                    print('Error : name of primer file incorrect need _F and _R. (primerX_F.fa and primerX_R.fa)')
+            else:
+                print('Error : name of primer file incorrect need _F and _R . (primerX_F.fa and primerX_R.fa)')
             if base not in mon_dict:
                 mon_dict[base] = {}
-            mon_dict[base][number] = f
+            mon_dict[base][orientaition] = f
 
         # Crée le dossier de sortie si nécessaire
         os.makedirs(output, exist_ok=True)
@@ -123,17 +126,17 @@ class Methods(object):
         BWA_index_cmd = ['bwa', 'index', genome]
         subprocess.run(BWA_index_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
+        # Parcourt chaque entrée dans le dictionnaire pour effectuer les alignements
         for key, sub_dict in mon_dict.items():
-            BWA_cmd = ['bwa', 'mem', genome, sub_dict['1'], sub_dict['2']]
+            BWA_cmd = ['bwa', 'mem', genome, sub_dict['F'], sub_dict['R']]
             with open(f'{output}/BWA_output.sam', 'w') as outfile, open(os.devnull, 'w') as errfile:
                 subprocess.run(BWA_cmd, stdout=outfile, stderr=errfile)
 
     @staticmethod
     def extract_primer_positions(sam_file, essentiel_file):
-        print('Extrat position primer...')
         primer_positions = {}
-        with open(essentiel_file,'r') as file:
-            liste_gene_essentiel = [ligne.strip() for ligne in file]
+        with open(essentiel_file,'r') as essentiel:
+            liste_gene_essentiel = [ligne.strip() for ligne in essentiel]
 
         with open(sam_file, 'r') as file:
             for line in file:
@@ -151,13 +154,13 @@ class Methods(object):
                 length = int(columns[8])
 
                 if read_id in liste_gene_essentiel:
-                    essentiel = True
+                    essentiel_gene = True
                 else:
-                    essentiel = False
+                    essentiel_gene = False
 
                 part1, part2 = read_id.rsplit('-', 1)
 
-                list_var = [part2,position,postion_mate,length,qualite,essentiel]
+                list_var = [part2,position,postion_mate,length,qualite,essentiel_gene]
 
                 if part1 not in primer_positions:
                     primer_positions[part1] = {}

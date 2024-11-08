@@ -33,29 +33,36 @@ class Ecoli(object):
         self.cpu, self.parallel = Methods.check_cpus(self.cpu, self.parallel)
         self.mem = Methods.check_mem(self.mem)
 
+        # Folder for intermediate + final result
         done_extract = self.output_folder + '/done_extract'
         done_result = self.output_folder + '/done_result'
 
         extract_folder = os.path.join(self.output_folder, '1_extract/')
         result_folder = os.path.join(self.output_folder, '2_result/')
 
+        # Start of program
         Methods.make_folder(self.output_folder)
         print('\tAll good!')
 
-        # Extraction
+        # Alignement
         if not os.path.exists(done_extract):
+            print('Alignment processing...')
             Methods.alignment(self.ref_genome, self.input, extract_folder)
-            #Methods.flag_done(done_extract)
+            Methods.flag_done(done_extract)
         else:
             print('Skipping extract. Already done.')
 
-        sam_file = Methods.find_sam_files(extract_folder)
-
-        # Manipulation
+        # Retrieve the SAM files from the alignment
+        sam_file = Methods.get_sam_file(extract_folder)
+        if sam_file is None:
+            print('Error : Not find SAM file of alignment')
+        
+        # Extraction info + write output
         if not os.path.exists(done_result):
-            position = Methods.extract_primer_positions(sam_file[0], self.essentiel)
+            print('Extrat position primer...')
+            position = Methods.extract_primer_positions(sam_file, self.essentiel)
             Methods.write_result(position, result_folder)
-            #Methods.flag_done(done_result)
+            Methods.flag_done(done_result)
         else:
             print('Skipping result. Already done.')
 
