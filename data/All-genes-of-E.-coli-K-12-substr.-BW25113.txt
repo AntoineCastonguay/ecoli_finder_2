@@ -2020,7 +2020,7 @@ argF	BW25113_RS01400	285012	286016	CP4-6_prophage;_ornithine_carbamoyltransferas
 BW25113_RS10905	BW25113_RS10905	2164909	2165208	DeoR/GlpR_transcriptional_regulator
 nimR	BW25113_RS09365	1869012	1869833	DNA-binding_transcriptional_repressor_NimR
 rayT	BW25113_RS01155	244124	244621	REP-associated_tyrosine_transposase
-murE	BW25113_RS00425	89653	91140	UDP-N-acetylmuramoyl-L-alanyl-D-glutamate--2,6-diaminopimelate_ligase
+murE	BW25113_RS00425	89653	91140	UDP-N-acetylmuramoyl-L-alanyl-D-glutamate-r2,6-diaminopimelate_ligase
 rpmE	BW25113_RS20420	4116941	4117153	50S_ribosomal_protein_L31
 ycgX	BW25113_RS06030	1208159	1208563	DUF1398_domain-containing_protein_YcgX
 malE	BW25113_RS20940	4235157	4236347	maltose_ABC_transporter_periplasmic_binding_protein
@@ -2509,7 +2509,7 @@ lgoT	BW25113_RS22680	4583178	4584539	galactonate:H+_symporter
 araE	BW25113_RS14780	2974123	2975541	arabinose:H<sup>+</sup>_symporter
 BW25113_RS26035	BW25113_RS26035	1665258	1665377	hypothetical_protein
 pepA	BW25113_RS22115	4474257	4475768	aminopeptidase_A/I
-hypF	BW25113_RS14115	2828532	2830784	carbamoyl--[HypE]_ligase
+hypF	BW25113_RS14115	2828532	2830784	carbamoyl-r[HypE]_ligase
 ybgE	BW25113_RS03815	769765	770058	PF09600_family_protein_YbgE
 ydfG	BW25113_RS08070	1621774	1622520	3-hydroxy_acid_dehydrogenase_YdfG
 gadA	BW25113_RS18230	3659540	3660940	glutamate_decarboxylase_A
@@ -3016,7 +3016,7 @@ BW25113_RS03885	BW25113_RS03885	777033	777108	tRNA-Lys
 ilvL	BW25113_RS19565	3943682	3943780	<i>ilvXGMEDA</i>_operon_leader_peptide
 rutR	BW25113_RS05270	1069698	1070336	DNA-binding_transcriptional_dual_regulator_RutR
 yrdA	BW25113_RS17005	3422595	3423149	hexapeptide_repeats-containing_protein_YrdA
-purD	BW25113_RS20780	4194570	4195859	phosphoribosylamine--glycine_ligase
+purD	BW25113_RS20780	4194570	4195859	phosphoribosylamine-rglycine_ligase
 kdpF	BW25113_RS03615	724188	724277	K<sup>+</sup>_transporting_P-type_ATPase_subunit_KdpF
 hsdS	BW25113_RS22635	4569885	4571279	type_I_restriction_enzyme_EcoKI_specificity_subunit
 mhpC	BW25113_RS01795	365472	365993	2-hydroxy-6-oxonona-2,4-dienedioate_hydrolase
@@ -3138,7 +3138,7 @@ ybfQ	BW25113_RS03645	731901	732134	ISAs1_family_transposase
 rlmB	BW25113_RS21720	4399092	4399823	23S_rRNA_2'-<i>O</i>-ribose_G2251_methyltransferase
 cysJ	BW25113_RS14380	2883458	2885257	sulfite_reductase,_flavoprotein_subunit
 mngA	BW25113_RS03785	761500	763416	2-O-alpha-mannosyl-D-glycerate_specific_PTS_enzyme_II
-lgt	BW25113_RS14705	2958521	2959396	phosphatidylglycerol--prolipoprotein_diacylglyceryl_transferase
+lgt	BW25113_RS14705	2958521	2959396	phosphatidylglycerol-rprolipoprotein_diacylglyceryl_transferase
 BW25113_RS10120	BW25113_RS10120	2005030	2005832	leucine-rich_repeat_domain-containing_protein
 ubiE	BW25113_RS19900	4012215	4012970	bifunctional_2-octaprenyl-6-methoxy-1,4-benzoquinol_methylase_and_demethylmenaquinone_methyltransferase
 ubiG	BW25113_RS11655	2333046	2333768	bifunctional_3-demethylubiquinone-<i>8</i>_3-<i>O</i>-methyltransferase_and_2-octaprenyl-6-hydroxyphenol_methylase
@@ -3410,7 +3410,7 @@ yafW	BW25113_RS01245	259401	259718	antitoxin_of_the_YkfI-YafW_toxin-antitoxin_pa
 gutM	BW25113_RS14085	2821980	2822339	DNA-binding_transcriptional_activator_GutM
 pflB	BW25113_RS04685	946728	949010	pyruvate_formate-lyase
 xdhA	BW25113_RS14905	2993665	2995962	putative_xanthine_dehydrogenase_molybdenum-binding_subunit_XdhA
-recE	BW25113_RS07090	1409043	1411643	Rac_prophage;_exonuclease_VIII,_ds_DNA_exonuclease,_5'_-->_3'_specific
+recE	BW25113_RS07090	1409043	1411643	Rac_prophage;_exonuclease_VIII,_ds_DNA_exonuclease,_5'_-r>_3'_specific
 yeaO	BW25113_RS09375	1871166	1871513	DUF488_domain-containing_protein_YeaO
 hypD	BW25113_RS14205	2845495	2846616	Fe-(CN)<sub>2</sub>CO_cofactor_assembly_scaffold_protein_HypD
 narW	BW25113_RS07690	1530871	1531566	nitrate_reductase_molybdenum_cofactor_assembly_chaperone

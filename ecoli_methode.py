@@ -152,19 +152,23 @@ class Methods(object):
                 qualite = columns[5]  #qualité alignment
                 postion_mate = int(columns[7])
                 length = int(columns[8])
+                seq = columns[9]
+                
+                parties = read_id.split('-')
+                id = "-".join(parties[:2])
+                gene = parties[2]
+                init = parties[3]
 
                 if read_id in liste_gene_essentiel:
                     essentiel_gene = True
                 else:
                     essentiel_gene = False
 
-                part1, part2 = read_id.rsplit('-', 1)
+                list_var = [gene,position,postion_mate,length,qualite,essentiel_gene,init]
 
-                list_var = [part2,position,postion_mate,length,qualite,essentiel_gene]
-
-                if part1 not in primer_positions:
-                    primer_positions[part1] = {}
-                primer_positions[part1][flag] = list_var
+                if id not in primer_positions:
+                    primer_positions[id] = {}
+                primer_positions[id][flag] = list_var
 
         return primer_positions
     
@@ -174,7 +178,7 @@ class Methods(object):
 
         Methods.make_folder(output)
         with open(f'{output}/output.txt', 'w') as f:
-            f.write(f"id\tgene\tflag\tfirst_pos\tsecond_pos\tlength\tquality\tessentiel\n")
+            f.write(f"id\tgene\tflag\tfirst_pos\tsecond_pos\tlength\tquality\tessentiel\tinit\n")
             for read_id, sub_dict in data.items():
                 for flag, list_var in sub_dict.items():
-                    f.write(f"{read_id}\t{list_var[0]}\t{flag}\t{list_var[1]}\t{list_var[2]}\t{list_var[3]}\t{list_var[4]}\t{list_var[5]}\n")
+                    f.write(f"{read_id}\t{list_var[0]}\t{flag}\t{list_var[1]}\t{list_var[2]}\t{list_var[3]}\t{list_var[4]}\t{list_var[5]}\t{list_var[6]}\n")

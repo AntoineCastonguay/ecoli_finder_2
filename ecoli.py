@@ -48,7 +48,7 @@ class Ecoli(object):
         if not os.path.exists(done_extract):
             print('Alignment processing...')
             Methods.alignment(self.ref_genome, self.input, extract_folder)
-            Methods.flag_done(done_extract)
+            #Methods.flag_done(done_extract)
         else:
             print('Skipping extract. Already done.')
 
@@ -62,7 +62,7 @@ class Ecoli(object):
             print('Extrat position primer...')
             position = Methods.extract_primer_positions(sam_file, self.essentiel)
             Methods.write_result(position, result_folder)
-            Methods.flag_done(done_result)
+            #Methods.flag_done(done_result)
         else:
             print('Skipping result. Already done.')
 
