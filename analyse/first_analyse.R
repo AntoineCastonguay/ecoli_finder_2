@@ -105,6 +105,7 @@ table(ecoli$quality)
 ecoli_positif <- subset(ecoli,ecoli$length > 0 & ecoli$length < 10000)
 rownames(ecoli_positif) <- 1:nrow(ecoli_positif)
 ecoli_new_gene <- ecoli_positif[,c(1,2,4,5)]
+ecoli_new_gene_2 <- ecoli_positif[,c(1,2,4,5)]
 # garde une copie par gene et enleve les longeur aberente
 new_gene_f <- c()
 new_gene_s <- c()
@@ -208,5 +209,37 @@ table(ecoli_positif$correspondance_l)
 table(ecoli_positif$correspondance_r)
 
 ecoli_positif_first <- ecoli_positif[,c('id','gene','init','first_pos','correspondance_l','c_gene_l','c_diff_l','second_pos','correspondance_r','c_gene_r','c_diff_r')]
+
+new_gene <- data.frame()
+for (i in 1:nrow(ecoli_new_gene_2)) {
+  seq_test <- seq(ecoli_new_gene_2$first_pos[i],ecoli_new_gene_2$second_pos[i])
+  old_similarite <- 0
+  new_line <- c(ecoli_new_gene_2$id[i],ecoli_new_gene_2$gene[i],ecoli_new_gene_2$first_pos[i],ecoli_new_gene_2$second_pos[i],NA,NA,NA,NA)
+  for (j in 1:nrow(ecoli_BW25113)) {
+    seq_ref <- seq(ecoli_BW25113$Left.End.Position[j],ecoli_BW25113$Right.End.Position[j])
+    
+    res <- intersect(seq_test,seq_ref)
+    nb_similaires <- length(res)
+    
+    if (nb_similaires > 0) {
+      max <- max(length(seq_test), length(seq_ref))
+      similarite <- nb_similaires/max
+      if (similarite == 1) {
+        old_similarite <- similarite
+        new_line <- c(ecoli_new_gene_2$id[i],ecoli_new_gene_2$gene[i],ecoli_new_gene_2$first_pos[i],ecoli_new_gene_2$second_pos[i],ecoli_BW25113$Gene_Name[j], ecoli_BW25113$Left.End.Position[j],ecoli_BW25113$Right.End.Position[j],old_similarite)
+        break
+      }
+      if (similarite > old_similarite) {
+        old_similarite <- similarite
+        new_line <- c(ecoli_new_gene_2$id[i],ecoli_new_gene_2$gene[i],ecoli_new_gene_2$first_pos[i],ecoli_new_gene_2$second_pos[i],ecoli_BW25113$Gene_Name[j], ecoli_BW25113$Left.End.Position[j],ecoli_BW25113$Right.End.Position[j],old_similarite)
+      }
+    }
+  }
+  new_gene <- rbind(new_gene,new_line)
+}
+
+colnames(new_gene) <- c('id','old_gene','old_left_pos', 'old_right_pos','new_gene','new_left_pos', 'new_right_pos', 'similarity')
+sub_new_gene <- subset(new_gene, subset = as.numeric(similarity) < 1)
+sub_new_gene_diff <- subset(new_gene, subset = old_gene != new_gene)
 
 write.csv(ecoli_positif, file = "../keio_long_read/data/ecoli_bw25113_gene.csv")
