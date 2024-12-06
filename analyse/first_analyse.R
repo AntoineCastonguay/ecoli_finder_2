@@ -241,5 +241,10 @@ for (i in 1:nrow(ecoli_new_gene_2)) {
 colnames(new_gene) <- c('id','old_gene','old_left_pos', 'old_right_pos','new_gene','new_left_pos', 'new_right_pos', 'similarity')
 sub_new_gene <- subset(new_gene, subset = as.numeric(similarity) < 1)
 sub_new_gene_diff <- subset(new_gene, subset = old_gene != new_gene)
+sub_new_gene_not <- subset(new_gene, subset = is.na(similarity))
+new_gene$old_left_pos <- as.numeric(new_gene$old_left_pos)
+new_gene$old_right_pos <- as.numeric(new_gene$old_right_pos)
+new_gene$new_left_pos <- as.numeric(new_gene$new_left_pos)
+new_gene$new_right_pos <- as.numeric(new_gene$new_right_pos)
 
 write.csv(ecoli_positif, file = "../keio_long_read/data/ecoli_bw25113_gene.csv")
